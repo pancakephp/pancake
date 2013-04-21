@@ -6,16 +6,16 @@
 
 class Route extends Pancake\HTTP\Route
 {
-    private static $_routes;
+    private static $routes;
 
     public static function getRoutes()
     {
-        return self::$_routes;
+        return self::$routes;
     }
 
     public static function register($method, $pattern, $action)
     {
-        return self::$_routes[] = new self($method, $pattern, $action);
+        return self::$routes[] = new self($method, $pattern, $action);
     }
 
     public static function get($pattern, $action)

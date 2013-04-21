@@ -13,7 +13,7 @@ class Matcher
 
     public function __construct(Collection $routes)
     {
-        $this->_routes  = $routes;
+        $this->routes  = $routes;
     }
 
     public function match(Request $request)
@@ -21,7 +21,7 @@ class Matcher
         $pathinfo = $request->getPathInfo();
         $method   = $request->getMethod();
 
-        foreach ($this->_routes as $name => $route)
+        foreach ($this->routes as $name => $route)
         {
             // Check for a static pattern match first
             if (!$route->getStaticPattern() && !($pathinfo == $route->getStaticPattern()))
@@ -39,11 +39,4 @@ class Matcher
         }
     }
 
-    public function _getContext(Request $request)
-    {
-        return array(
-            'method' => $request->getMethod(),
-            'pathinfo' => $request->getPathInfo()
-        );
-    }
 }

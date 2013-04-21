@@ -9,7 +9,8 @@ namespace Pancake\HTTP;
 class Response
 {
 
-    private $_content;
+    private $content;
+    private $status_code;
 
     public function __construct($content = '', $status = 200, $headers = array())
     {
@@ -35,7 +36,7 @@ class Response
     public function sendContent()
     {
         $out = fopen('php://output', 'wb');
-        fwrite($out, $this->_content);
+        fwrite($out, $this->content);
         fclose($out);
 
         return $this;
@@ -43,12 +44,12 @@ class Response
 
     public function setContent($content)
     {
-        $this->_content = (string) $content;
+        $this->content = (string) $content;
     }
 
     public function setStatusCode($status)
     {
-        $this->_status_code = (int) $status;
+        $this->status_code = (int) $status;
     }
 
 }

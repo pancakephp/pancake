@@ -11,8 +11,8 @@ require_once APP.'/routes.php';
 class Collection implements \IteratorAggregate, \Countable
 {
 
-    private $_routes;
-    private $_aliases;
+    private $routes;
+    private $aliases;
 
     public function __construct()
     {
@@ -20,12 +20,12 @@ class Collection implements \IteratorAggregate, \Countable
 
         foreach ($routes as $route)
         {
-            $this->_routes[$route->getKey()] = $route;
+            $this->routes[$route->getKey()] = $route;
 
             // For O(1) alias lookups
             if($alias = $route->getAlias())
             {
-                $this->_aliases = $alias;
+                $this->aliases = $alias;
             }
         }
 
@@ -33,17 +33,17 @@ class Collection implements \IteratorAggregate, \Countable
 
     public function getIterator()
     {
-        return new \ArrayIterator($this->_routes);
+        return new \ArrayIterator($this->routes);
     }
 
     public function count()
     {
-        return count($this->_routes);
+        return count($this->routes);
     }
 
     public function get($key)
     {
-        return isset($this->_routes[$key]) ? $this->_routes[$key] : null;
+        return isset($this->routes[$key]) ? $this->routes[$key] : null;
     }
 
 }

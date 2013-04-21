@@ -7,22 +7,24 @@
 namespace Pancake\HTTP;
 
 use Pancake\Support\Str;
-use Pancake\Support\ClassLoader;
+use Pancake\Support\SplClassLoader;
+
+use ReflectionClass;
 
 class Route
 {
 
-    private $_method;
-    private $_pattern;
-    private $_action;
-    private $_domain;
-    private $_alias;
+    private $method;
+    private $pattern;
+    private $action;
+    private $domain;
+    private $alias;
 
     public function __construct($method, $pattern, $action)
     {
-        $this->_method  = $method;
-        $this->_pattern = $pattern;
-        $this->_action  = $action;
+        $this->method  = $method;
+        $this->pattern = $pattern;
+        $this->action  = $action;
     }
 
     public function alias($alias)
@@ -44,40 +46,40 @@ class Route
     {
         // Call Befores
 
-        $call = $this->_call();
-
-        echo __METHOD__.' : '.__LINE__;
-        echo '<pre>'.print_r($call, 1).'</pre>';
-        die;
+        $call = $this->callAction();
 
         // Call Afters
 
-        return new Response('Hello world!');
+        // Return the response
+        return new Response($call);
     }
 
-    private function _call()
+    private function callAction()
     {
-        return call_user_func_array($this->_getCallable(), $this->_getParameters());
+        return call_user_func_array($this->getCallback(), $this->getParameters());
     }
 
-    private function _getCallable()
+    private function getCallback()
     {
         if(is_callable($this->getAction()))
         {
             return $this->getAction();
         }
 
-        list($controller, $method) = explode('@', $this->_action);
+        return $this->createControllerCallback($this->getAction());
+    }
 
-        require_once APP.'/controllers/'.str_replace('.', '/', $controller).'.php';
+    private function createControllerCallback($action)
+    {
+        $loader = new SplClassLoader(APP.'/controllers');
+        $loader->register();
 
-        // Normalize the classname
-        $controller = Str::studly(Str::afterLast($controller, '.').' controller');
+        list($controller, $method) = explode('@', $action);
 
         return array((new $controller), $method);
     }
 
-    private function _getParameters()
+    private function getParameters()
     {
         return array();
     }
@@ -85,21 +87,21 @@ class Route
     // Fucking horrible.
     public function getKey()
     {
-        $domain  = isset($this->_domain) ? $this->_domain.' ' : '';
-        $method  = !($this->_method === Request::ANY) ? $this->_method.' ' : '';
-        $pattern = trim($this->_pattern) === '/' ? '/' : rtrim(trim($this->_pattern), '/');
+        $domain  = isset($this->domain) ? $this->domain.' ' : '';
+        $method  = !($this->method === Request::ANY) ? $this->method.' ' : '';
+        $pattern = trim($this->pattern) === '/' ? '/' : rtrim(trim($this->pattern), '/');
 
         return $domain.$method.$pattern;
     }
 
     public function getMethod()
     {
-        return strtoupper($this->_method);
+        return strtoupper($this->method);
     }
 
     public function getPattern()
     {
-        return $this->_pattern;
+        return $this->pattern;
     }
 
     // Returns the pattern, if it's a static one (i.e. without dynamic parameters)
@@ -107,7 +109,7 @@ class Route
     public function getStaticPattern()
     {
         return !Str::contains($this->getPattern(), '{')
-            ? $this->_pattern
+            ? $this->pattern
             : false;
     }
 
@@ -119,12 +121,12 @@ class Route
 
     public function getAlias()
     {
-        return $this->_alias;
+        return $this->alias;
     }
 
     public function getAction()
     {
-        return $this->_action;
+        return $this->action;
     }
 
 }

@@ -9,7 +9,7 @@ namespace Pancake\Support;
 class Sack
 {
 
-    public $values = array();
+    private $values = array();
 
     public function __construct(array $array)
     {

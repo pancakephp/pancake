@@ -4,26 +4,9 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-Route::post('/', function()
-{
-    return 'Home';
-});
+Route::get('/', 'Do_SomethingController@index');
 
-Route::get('/', 'do.something@index');
-
-// Route::get('/', function()
-// {
-//     return 'Home';
-// });
-
-
-Route::any('/', function()
-{
-    return 'Home';
-});
-
-
-Route::any('/{id}/', function()
+Route::get('/{id}/', function()
 {
     return 'ID Page';
 });

@@ -25,7 +25,7 @@ class Request
     public $headers; // Headers
     public $parameters; // From the URI e.g. /{id}/
 
-    private $_method = null;
+    private $method = null;
 
     public function __construct()
     {
@@ -68,12 +68,12 @@ class Request
 
     public function getMethod()
     {
-        if($this->_method === null)
+        if($this->method === null)
         {
-            $this->_method = $this->server->get('request_method', self::GET);
+            $this->method = $this->server->get('request_method', self::GET);
         }
 
-        return $this->_method;
+        return $this->method;
     }
 
 

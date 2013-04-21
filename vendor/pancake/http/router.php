@@ -12,20 +12,20 @@ use Pancake\HTTP\Route\Matcher;
 class Router
 {
 
-    private $_routes;
+    private $routes;
 
     public function __construct()
     {
-        $this->_routes = new Collection;
+        $this->routes = new Collection;
     }
 
     public function route(Request $request)
     {
         $path = $request->getPathInfo();
 
-        $name = (new Matcher($this->_routes))->match($request);
+        $name = (new Matcher($this->routes))->match($request);
 
-        return $this->_routes->get($name);
+        return $this->routes->get($name);
     }
 
 }

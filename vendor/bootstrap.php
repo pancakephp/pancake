@@ -13,11 +13,12 @@ define('STORAGE', $base.'/storage');
 define('VENDOR', $base.'/vendor');
 define('SYSTEM', $base.'/vendor/pancake');
 
-require_once SYSTEM.'/support/classloader.php';
+require_once SYSTEM.'/support/splclassloader.php';
 
 try
 {
-    Pancake\Support\ClassLoader::listen();
+    $loader = new Pancake\Support\SplClassLoader(VENDOR);
+    $loader->register();
 
     $app = new Pancake\App;
 

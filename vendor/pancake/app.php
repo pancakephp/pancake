@@ -34,7 +34,7 @@ class App
 
     public function shutdown()
     {
-        // Teardown
+        //..
     }
 
 }
