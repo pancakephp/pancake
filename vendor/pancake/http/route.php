@@ -7,6 +7,7 @@
 namespace Pancake\HTTP;
 
 use Pancake\Support\Str;
+use Pancake\Support\ClassLoader;
 
 class Route
 {
@@ -26,12 +27,59 @@ class Route
 
     public function alias($alias)
     {
-        $this->_alias = $alias;
+        //..
     }
 
-    public function getAlias()
+    public function filter($filter)
     {
-        return $this->_alias;
+        //..
+    }
+
+    public function where(Array $regexes)
+    {
+        //..
+    }
+
+    public function run()
+    {
+        // Call Befores
+
+        $call = $this->_call();
+
+        echo __METHOD__.' : '.__LINE__;
+        echo '<pre>'.print_r($call, 1).'</pre>';
+        die;
+
+        // Call Afters
+
+        return new Response('Hello world!');
+    }
+
+    private function _call()
+    {
+        return call_user_func_array($this->_getCallable(), $this->_getParameters());
+    }
+
+    private function _getCallable()
+    {
+        if(is_callable($this->getAction()))
+        {
+            return $this->getAction();
+        }
+
+        list($controller, $method) = explode('@', $this->_action);
+
+        require_once APP.'/controllers/'.str_replace('.', '/', $controller).'.php';
+
+        // Normalize the classname
+        $controller = Str::studly(Str::afterLast($controller, '.').' controller');
+
+        return array((new $controller), $method);
+    }
+
+    private function _getParameters()
+    {
+        return array();
     }
 
     // Fucking horrible.
@@ -63,9 +111,20 @@ class Route
             : false;
     }
 
+    // TODO: this
     public function getRegexPattern()
     {
         return '#^/$#s';
+    }
+
+    public function getAlias()
+    {
+        return $this->_alias;
+    }
+
+    public function getAction()
+    {
+        return $this->_action;
     }
 
 }

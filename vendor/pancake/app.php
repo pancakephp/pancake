@@ -23,9 +23,13 @@ class App
     {
         $route = (new Router)->route($this->request);
 
-        echo '<h3>Matching route!</h3>';
-        echo '<pre>'.print_r($route, 1).'</pre>';
-        die;
+        // Global Befores
+
+        $response = $route->run();
+
+        // Global Afters
+
+        $response->send();
     }
 
     public function shutdown()

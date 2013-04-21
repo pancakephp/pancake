@@ -6,25 +6,26 @@
 
 Route::post('/', function()
 {
-    echo 'Home';
+    return 'Home';
 });
 
-Route::get('/', function()
-{
-    echo 'Home';
-})
-->alias('home');
+Route::get('/', 'do.something@index');
+
+// Route::get('/', function()
+// {
+//     return 'Home';
+// });
 
 
 Route::any('/', function()
 {
-    echo 'Home';
+    return 'Home';
 });
 
 
 Route::any('/{id}/', function()
 {
-    echo 'ID Page';
+    return 'ID Page';
 });
 
 // What we want to work

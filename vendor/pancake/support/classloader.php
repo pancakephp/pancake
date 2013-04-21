@@ -5,11 +5,13 @@
  */
 namespace Pancake\Support;
 
+use Pancake\Support\Str;
+
 class ClassLoader
 {
     public function __construct()
     {
-        spl_autoload_register(array($this, 'loadClass'), true, true);
+        spl_autoload_register(array($this, 'loadClass'), true);
     }
 
     public static function listen()
@@ -18,6 +20,18 @@ class ClassLoader
     }
 
     public function loadClass($classname)
+    {
+        $filename = self::_getFilename($classname);
+
+        $filename = VENDOR.'/'.$filename;
+
+        if (!file_exists($filename))
+            throw new \Exception($classname.' ~ File does not exist : '.$filename);
+
+        require_once $filename;
+    }
+
+    private static function _getFilename($classname, $ds = '_')
     {
         $classname = ltrim($classname, '\\');
         $filename  = '';
@@ -30,12 +44,9 @@ class ClassLoader
             $filename  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace).DIRECTORY_SEPARATOR;
         }
 
-        $filename .= str_replace('_', DIRECTORY_SEPARATOR, $classname) . '.php';
-        $filename = VENDOR.'/'.$filename;
+        $filename .= str_replace($ds, DIRECTORY_SEPARATOR, $classname) . '.php';
 
-        if(!file_exists($filename))
-            throw new \Exception($classname.' ~ File does not exist : '.$filename);
-
-        require_once $filename;
+        return $filename;
     }
+
 }
