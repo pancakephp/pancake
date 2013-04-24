@@ -27,7 +27,7 @@ class Str
 
     public static function afterLast($haystack, $needle)
     {
-        if (!self::contains($haystack, $needle))
+        if (!static::contains($haystack, $needle))
         {
             return $haystack;
         }

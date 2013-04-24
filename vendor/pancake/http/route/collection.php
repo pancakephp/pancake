@@ -6,19 +6,20 @@
 
 namespace Pancake\HTTP\Route;
 
-require_once APP.'/routes.php';
+use Pancake\HTTP\Route;
 
 class Collection implements \IteratorAggregate, \Countable
 {
 
-    private $routes;
+    private $routes = array();
     private $aliases;
 
     public function __construct()
     {
+        /*
         $routes = \Route::getRoutes();
 
-        foreach ($routes as $route)
+        foreach ((array) $routes as $route)
         {
             $this->routes[$route->getKey()] = $route;
 
@@ -28,7 +29,21 @@ class Collection implements \IteratorAggregate, \Countable
                 $this->aliases = $alias;
             }
         }
+        */
+    }
 
+    public function add(Route $route)
+    {
+        $name = $route->getName();
+
+        unset($this->routes[$name]);
+
+        $this->routes[$name] = $route;
+    }
+
+    public function get($key)
+    {
+        return isset($this->routes[$key]) ? $this->routes[$key] : null;
     }
 
     public function getIterator()
@@ -39,11 +54,6 @@ class Collection implements \IteratorAggregate, \Countable
     public function count()
     {
         return count($this->routes);
-    }
-
-    public function get($key)
-    {
-        return isset($this->routes[$key]) ? $this->routes[$key] : null;
     }
 
 }

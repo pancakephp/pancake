@@ -9,124 +9,54 @@ namespace Pancake\HTTP;
 use Pancake\Support\Str;
 use Pancake\Support\SplClassLoader;
 
-use ReflectionClass;
-
 class Route
 {
+    private $path = '/';
 
-    private $method;
-    private $pattern;
-    private $action;
-    private $domain;
-    private $alias;
+    private $host = '';
 
-    public function __construct($method, $pattern, $action)
+    private $methods = array();
+
+    private $groups = array();
+
+    public function __construct($methods, $path)
     {
-        $this->method  = $method;
-        $this->pattern = $pattern;
-        $this->action  = $action;
+        $this->setMethods($methods);
+        $this->setPath($path);
     }
 
-    public function alias($alias)
+    public function setPath($path)
     {
-        //..
+        $this->path = $path;
     }
 
-    public function filter($filter)
+    public function setMethods($method)
     {
-        //..
+        $this->methods = explode('|', $method);
     }
 
-    public function where(Array $regexes)
+    public function setGroups($groups)
     {
-        //..
+        $this->groups = (array) $groups;
     }
 
-    public function run()
+    public function getName()
     {
-        // Call Befores
-
-        $call = $this->callAction();
-
-        // Call Afters
-
-        // Return the response
-        return new Response($call);
-    }
-
-    private function callAction()
-    {
-        return call_user_func_array($this->getCallback(), $this->getParameters());
-    }
-
-    private function getCallback()
-    {
-        if(is_callable($this->getAction()))
-        {
-            return $this->getAction();
-        }
-
-        return $this->createControllerCallback($this->getAction());
-    }
-
-    private function createControllerCallback($action)
-    {
-        $loader = new SplClassLoader(APP.'/controllers');
-        $loader->register();
-
-        list($controller, $method) = explode('@', $action);
-
-        return array((new $controller), $method);
-    }
-
-    private function getParameters()
-    {
-        return array();
-    }
-
-    // Fucking horrible.
-    public function getKey()
-    {
-        $domain  = isset($this->domain) ? $this->domain.' ' : '';
-        $method  = !($this->method === Request::ANY) ? $this->method.' ' : '';
-        $pattern = trim($this->pattern) === '/' ? '/' : rtrim(trim($this->pattern), '/');
-
-        return $domain.$method.$pattern;
+        return $this->getMethod().' '.$this->getPath();
     }
 
     public function getMethod()
     {
-        return strtoupper($this->method);
+        return implode('|', $this->methods);
     }
 
-    public function getPattern()
+    public function getPath()
     {
-        return $this->pattern;
+        return $this->path;
     }
 
-    // Returns the pattern, if it's a static one (i.e. without dynamic parameters)
-    // a dynamic pattern will return false
-    public function getStaticPattern()
+    public function alias($name)
     {
-        return !Str::contains($this->getPattern(), '{')
-            ? $this->pattern
-            : false;
+        // $this->setAlias($name);
     }
-
-    // TODO: this
-    public function getRegexPattern()
-    {
-        return '#^/$#s';
-    }
-
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
-    }
-
 }

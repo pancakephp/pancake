@@ -6,36 +6,35 @@
 
 namespace Pancake\HTTP;
 
-use Pancake\Support\Sack;
+use Pancake\Support\Sacks\ServerSack;
 
 class Request
 {
 
-    const GET = 'GET';
-    const POST = 'POST';
-    const PUT = 'PUT';
-    const DELETE = 'DELETE';
-    const ANY = 'ANY';
+    const GET    = 'get';
+    const POST   = 'post';
+    const PUT    = 'put';
+    const PATCH  = 'patch';
+    const DELETE = 'delete';
+    const ANY    = 'get|post|put|patch|delete';
 
-    public $query; // $_GET
-    public $request; // $_POST
-    public $server; // $_SERVER
-    public $files; // $_FILES
-    public $session; // Fom session handler
-    public $headers; // Headers
-    public $parameters; // From the URI e.g. /{id}/
+    public $query;      // $_GET
+    public $request;    // $_POST
+    public $server;     // $_SERVER
+    public $files;      // $_FILES
+    public $session;    // $_SESSION
+    public $headers;    // Headers
+    public $parameters; // URI Params
 
-    private $method = null;
+    private $method;
 
     public function __construct()
     {
-        $this->server = new Sack($_SERVER);
+        $this->server = new ServerSack($_SERVER);
     }
 
-    public function getURI()
-    {
-        // Normalized URI
-    }
+    // Normalized URI
+    public function getURI(){ }
 
     // http://site.dev/about        returns '/about'
     public function getPathInfo()
@@ -44,33 +43,22 @@ class Request
         return urldecode($uri);
     }
 
-    public function getQueryString()
-    {
-        // $_GET
-    }
+    // $_GET
+    public function getQueryString(){ }
 
-    public function getProtocol()
-    {
-        // http || https
-    }
+    public function getProtocol(){ }
 
     public function getPort(){ }
 
-    public function isSecure()
-    {
+    public function isSecure(){ }
 
-    }
-
-    public function setMethod()
-    {
-        // Set verb
-    }
+    public function setMethod(){ }
 
     public function getMethod()
     {
         if($this->method === null)
         {
-            $this->method = $this->server->get('request_method', self::GET);
+            $this->method = $this->server->get('request_method', static::GET);
         }
 
         return $this->method;

@@ -4,36 +4,28 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-Route::get('/', 'Do_SomethingController@index');
 
-Route::get('/{id}/', function()
-{
-    return 'ID Page';
-});
+Route::get('/', 'HomeController@index')->alias('home');
 
-// What we want to work
-//
-// Route::get('/', function()
-// {
-//     echo 'Home';
-// })
-// ->alias('account')  // Named route
-// ->filter('auth')    // Run filters before
-// ->where(array(
-//     'accountid' => '[0-9]+'
-// ));
+Route::group('authed', function(){
 
+    Route::get('/login', 'Secure_Login@index');
+    Route::post('/login', 'Secure_Login@authenticate');
 
-// Route::group(function()
-// {
-//     Route::get(/* .. */);
+    Route::group('account', function(){
 
-// })
-// ->domain('{account}.myside.com')
-// ->filter('auth');
+        Route::get('/account/{id}', function($account, $id){
+            //..
+        })
+        ->alias('account');
+
+    })
+    ->domain('{account}.mysite.com');
+
+})
+->filter(array('auth', 'https'));
 
 
-// Route::filter('auth', function()
-// {
-//     //.. Run some code
-// });
+/*
+Route::filter('auth', function(){ });
+*/
