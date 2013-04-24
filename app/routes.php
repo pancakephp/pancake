@@ -4,8 +4,15 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
+Route::any('/', 'HomeController@index');
 
-Route::get('/', 'HomeController@index')->alias('home');
+Route::get('/{name}/{age}', function($name, $age){
+    return 'Hello '.$name.', you\'re '.$age;
+})
+->where(array(
+    'age' => '[0-9]+'
+));
+
 
 Route::group('authed', function(){
 

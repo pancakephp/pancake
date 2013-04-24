@@ -6,33 +6,33 @@
 
 namespace Pancake\HTTP\Route;
 
-use \Pancake\HTTP\Request;
+use Pancake\Support\Str;
+use Pancake\HTTP\Request;
+use Pancake\HTTP\Request\RouteContext;
 
 class Matcher
 {
 
-    public function __construct(Collection $routes)
+    public function __construct(Collection $routes, RouteContext $context)
     {
         $this->routes  = $routes;
+        $this->context = $context;
     }
 
-    public function match(Request $request)
+    public function match($path)
     {
-        $pathinfo = $request->getPathInfo();
-        $method   = $request->getMethod();
-
         foreach ($this->routes as $name => $route)
         {
             // Check for a static pattern match first
-            if (!$route->getStaticPattern() && !($pathinfo == $route->getStaticPattern()))
+            if (!$route->getStaticPattern() && !(Str::startsWith($path, $route->getStaticPrefix())))
                 continue;
 
-            if (!preg_match($route->getRegexPattern(), $pathinfo, $matches))
+            if (!preg_match($route->getRegexPattern(), $path, $matches))
                 continue;
 
             // TODO: Matches on domain
 
-            if (!($route->getMethod() === $method))
+            if (!(in_array($this->context->getMethod(), $route->getMethods())))
                 continue;
 
             return $name;

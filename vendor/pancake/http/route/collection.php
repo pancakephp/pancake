@@ -12,25 +12,8 @@ class Collection implements \IteratorAggregate, \Countable
 {
 
     private $routes = array();
+
     private $aliases;
-
-    public function __construct()
-    {
-        /*
-        $routes = \Route::getRoutes();
-
-        foreach ((array) $routes as $route)
-        {
-            $this->routes[$route->getKey()] = $route;
-
-            // For O(1) alias lookups
-            if($alias = $route->getAlias())
-            {
-                $this->aliases = $alias;
-            }
-        }
-        */
-    }
 
     public function add(Route $route)
     {

@@ -20,9 +20,25 @@ class Str
         return false;
     }
 
+
+    public static function startsWith($haystack, $needle)
+    {
+        return strpos($haystack, $needle) === 0;
+    }
+
     public static function endsWith($haystack, $needle)
     {
         return $needle == substr($haystack, strlen($haystack) - strlen($needle));
+    }
+
+    public static function beforeFirst($haystack, $needle)
+    {
+        if (!static::contains($haystack, $needle))
+        {
+            return $haystack;
+        }
+
+        return substr($haystack, 0, strpos($haystack, $needle));
     }
 
     public static function afterLast($haystack, $needle)

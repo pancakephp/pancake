@@ -79,9 +79,9 @@ class Router
 
     public function register($method, $pattern, $action)
     {
-        $route = new Route($method, $pattern);
-
-        $route->setGroups($this->groups['stack']);
+        $route = (new Route($method, $pattern))
+            ->setOption('action', $action)
+            ->setGroups($this->groups['stack']);
 
         $this->routes->add($route);
 
@@ -90,10 +90,13 @@ class Router
 
     public function route(Request $request)
     {
-        // We have routes!
-        echo __METHOD__.' : '.__LINE__;
-        echo '<pre>'.print_r($this->routes, 1).'</pre>';
-        die;
+        $path = $request->getPathInfo();
+
+        $context = $request->getRouteContext();
+
+        $name = (new Matcher($this->routes, $context))->match($path);
+
+        return $this->routes->get($name);
     }
 
 }

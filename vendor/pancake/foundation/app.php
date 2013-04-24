@@ -23,17 +23,26 @@ class App extends Store
 
     public function run()
     {
-        $this->router->route($this->request); // print_r'in
-
-        // Route it
-        // Global Befores
-        // Run the route
-        // Global Afters
+        $response = $this->dispatch($this->request);
+        $response->send();
     }
 
     public function shutdown()
     {
         //..
+    }
+
+    private function dispatch(Request $request)
+    {
+        $route = $this->router->route($request);
+
+        // TODO: Global Befores
+
+        $response = $route->run($request);
+
+        // TODO: Global Afters
+
+        return $response;
     }
 
     public function setPaths(Array $paths)

@@ -7,6 +7,7 @@
 namespace Pancake\HTTP;
 
 use Pancake\Support\Sacks\ServerSack;
+use Pancake\HTTP\Request\RouteContext;
 
 class Request
 {
@@ -46,13 +47,13 @@ class Request
     // $_GET
     public function getQueryString(){ }
 
-    public function getProtocol(){ }
+    public function getScheme(){
+        return $this->isSecure() ? 'https' : 'http';
+    }
+
+    public function getHost(){ }
 
     public function getPort(){ }
-
-    public function isSecure(){ }
-
-    public function setMethod(){ }
 
     public function getMethod()
     {
@@ -64,5 +65,16 @@ class Request
         return $this->method;
     }
 
+    public function getRouteContext()
+    {
+        return new RouteContext($this);
+    }
+
+    // FIXME: Perform isSecure check
+    public function isSecure(){
+        return false;
+    }
+
+    public function setMethod(){ }
 
 }
