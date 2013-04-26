@@ -8,6 +8,8 @@ class HomeController // extends Controller
 
     public function index()
     {
+        // Redirect::to('me');
+
         return 'Hello '.$this->_world();
     }
 

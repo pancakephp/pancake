@@ -6,10 +6,15 @@
 
 namespace Pancake\Foundation;
 
+use Closure;
+use Pancake\HTTP\Router;
+
 abstract class Store implements \ArrayAccess
 {
 
     protected $store = array();
+
+    protected $instances = array();
 
     protected $aliases = array();
 
@@ -23,30 +28,72 @@ abstract class Store implements \ArrayAccess
         $this[$key] = $value;
     }
 
-    public function offsetSet($offset, $value)
+    public function share(Closure $closure)
     {
-        if (is_null($offset))
+        $app =& $this;
+        return function() use ($closure, $app)
         {
-            $this->store[] = $value;
-        }
-        else
+            static $object = false;
+
+            if(!$object)
+            {
+                $object = $closure($app);
+            }
+
+            return $object;
+        };
+    }
+
+    public function set($key, $value)
+    {
+        // Aliases first...
+        $this->store[$key] = $value;
+    }
+
+    public function get($key)
+    {
+        $key = $this->getAlias($key);
+
+        if(isset($this->instances[$key]))
         {
-            $this->store[$offset] = $value;
+            return $this->instances[$key];
         }
+
+        if(isset($this->store[$key]))
+        {
+            if(is_callable($this->store[$key]))
+            {
+                return $this->instances[$key] = call_user_func($this->store[$key]);
+            }
+
+            return $this->store[$key];
+        }
+
+        return $key;
     }
 
-    public function offsetExists($offset)
+    protected function getAlias($alias)
     {
-        return isset($this->store[$offset]);
+        return isset($this->aliases[$alias]) ? $this->aliases[$alias] : $alias;
     }
 
-    public function offsetUnset($offset)
+    public function offsetGet($key) {
+        return $this->get($key);
+    }
+
+    public function offsetSet($key, $value)
     {
-        unset($this->store[$offset]);
+        $this->set($key, $value);
     }
 
-    public function offsetGet($offset) {
-        return isset($this->store[$offset]) ? $this->store[$offset] : null;
+    public function offsetExists($key)
+    {
+        return isset($this->store[$key]);
+    }
+
+    public function offsetUnset($key)
+    {
+        unset($this->store[$key]);
     }
 
 }

@@ -33,7 +33,7 @@ class Aliases
         return static::$instance;
     }
 
-    public function registerLoader()
+    public function register()
     {
         if(!$this->registered)
         {

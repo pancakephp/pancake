@@ -4,35 +4,30 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-Route::any('/', 'HomeController@index');
+Route::any('/', 'HomeController@index')
+->before(array('beforeFilterOne', 'beforeFilterTwo'))
+->after('afterFilter');
 
-Route::get('/{name}/{age}', function($name, $age){
+Route::get('/{name}/{age}', function($name, $age)
+{
     return 'Hello '.$name.', you\'re '.$age;
 })
+// ->alias('me')
 ->where(array(
     'age' => '[0-9]+'
 ));
 
+Route::filter('beforeFilterOne', function()
+{
+    echo 'Before Filter One<br/>';
+});
 
-Route::group('authed', function(){
+Route::filter('beforeFilterTwo', function()
+{
+    echo 'Before Filter Two<br/>';
+});
 
-    Route::get('/login', 'Secure_Login@index');
-    Route::post('/login', 'Secure_Login@authenticate');
-
-    Route::group('account', function(){
-
-        Route::get('/account/{id}', function($account, $id){
-            //..
-        })
-        ->alias('account');
-
-    })
-    ->domain('{account}.mysite.com');
-
-})
-->filter(array('auth', 'https'));
-
-
-/*
-Route::filter('auth', function(){ });
-*/
+Route::filter('afterFilter', function()
+{
+    return 'After Filter<br/>';
+});

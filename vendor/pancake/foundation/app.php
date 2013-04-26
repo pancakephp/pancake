@@ -7,7 +7,6 @@
 namespace Pancake\Foundation;
 
 use Pancake\HTTP\Request;
-use Pancake\HTTP\Router;
 use Pancake\Support\Aliases;
 use Pancake\Support\Facades\Facade;
 
@@ -17,8 +16,7 @@ class App extends Store
 
     public function __construct()
     {
-        $this->request = new Request;
-        $this->router  = new Router;
+        $this->register(new ServiceProvider($this));
     }
 
     public function run()
@@ -47,21 +45,22 @@ class App extends Store
 
     public function setPaths(Array $paths)
     {
-        $this->offsetSet('paths', $paths);
+        $this->paths = $paths;
     }
 
-    public function registerAliases(Array $aliases)
+    private function register($provider)
     {
-        $instance = Aliases::getInstance($aliases);
-
-        $instance->registerLoader();
-
-        $this->aliases = $instance->getAliases();
+        $provider->register();
     }
 
     public function registerFacade()
     {
         Facade::setApp($this);
+    }
+
+    public function registerAliases(Array $aliases)
+    {
+        $this->register(Aliases::getInstance($aliases));
     }
 
 }

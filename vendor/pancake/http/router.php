@@ -12,20 +12,49 @@ use Closure;
 
 class Router
 {
+
     protected $routes;
 
-    protected $filters;
+    protected $filters = array();
 
     protected $groups = array(
         'stack'     => array(),
         'instances' => array()
     );
 
-    protected $group_stack = array();
-
-    public function __construct()
+    public function __construct($app)
     {
         $this->routes = new Collection;
+    }
+
+    public function route(Request $request)
+    {
+        $path = $request->getPathInfo();
+
+        $context = $request->getRouteContext();
+
+        $name = (new Matcher($this->routes, $context))->match($path);
+
+        $route = $this->routes->get($name);
+
+        // TODO: Cleanup?
+        $route->setFilters(
+            array_intersect_key($this->filters, array_flip($route->getOption('before'))),
+            array_intersect_key($this->filters, array_flip($route->getOption('after')))
+        );
+
+        return $route;
+    }
+
+    public function register($method, $pattern, $action)
+    {
+        $route = (new Route($method, $pattern))
+            ->setOption('action', $action)
+            ->setGroups($this->groups['stack']);
+
+        $this->routes->add($route);
+
+        return $route;
     }
 
     public function group($name, Closure $action)
@@ -45,6 +74,21 @@ class Router
     public function addGroup($name){
         $this->groups['stack'][] = $name;
         return $this->groups['instances'][$name] = new Group();
+    }
+
+    public function getFilter($key)
+    {
+        return isset($this->filters[$key]) ? $this->filters[$key] : null;
+    }
+
+    public function getCollection()
+    {
+        return $this->routes;
+    }
+
+    public function filter($name, Closure $action)
+    {
+        $this->filters[$name] = $action;
     }
 
     public function get($pattern, $action)
@@ -75,28 +119,6 @@ class Router
     public function any($pattern, $action)
     {
         return $this->register(Request::ANY, $pattern, $action);
-    }
-
-    public function register($method, $pattern, $action)
-    {
-        $route = (new Route($method, $pattern))
-            ->setOption('action', $action)
-            ->setGroups($this->groups['stack']);
-
-        $this->routes->add($route);
-
-        return $route;
-    }
-
-    public function route(Request $request)
-    {
-        $path = $request->getPathInfo();
-
-        $context = $request->getRouteContext();
-
-        $name = (new Matcher($this->routes, $context))->match($path);
-
-        return $this->routes->get($name);
     }
 
 }

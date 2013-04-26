@@ -6,6 +6,7 @@
 
 namespace Pancake\HTTP;
 
+use Closure;
 use Pancake\Support\Str;
 use Pancake\Support\SplClassLoader;
 
@@ -19,6 +20,10 @@ class Route
 
     private $groups = array();
 
+    private $befores = array();
+
+    private $afters = array();
+
     private $options = array(
         // Set within App/Routes, allows for easy urling
         'alias' => null,
@@ -31,6 +36,10 @@ class Route
 
         // Set within $this->getRegexPattern, the regex pattern used to match the url
         'pattern' => null,
+
+        'before' => array(),
+
+        'after' => array(),
     );
 
     public function __construct($methods, $path)
@@ -41,7 +50,15 @@ class Route
 
     public function run(Request $request)
     {
-        $response =  $this->callAction($request);
+        $response = $this->callBeforeFilters();
+
+        if (!$response)
+        {
+            $response = $this->callAction($request);
+
+            $this->callAfterFilters();
+        }
+
         return new Response($response);
     }
 
@@ -73,6 +90,30 @@ class Route
     {
         preg_match($this->getOption('pattern'), $path, $matches);
         return array_splice($matches, 1);
+    }
+
+    private function callBeforeFilters()
+    {
+        foreach($this->befores as $callback)
+        {
+            $response = $this->callFilter($callback);
+
+            if (!is_null($response))
+                return $response;
+        }
+    }
+
+    private function callAfterFilters()
+    {
+        foreach($this->afters as $callback)
+        {
+            $this->callFilter($callback);
+        }
+    }
+
+    private function callFilter(Closure $callback)
+    {
+        return call_user_func($callback);
     }
 
     public function getName()
@@ -166,6 +207,12 @@ class Route
         return $this;
     }
 
+    public function setFilters(Array $before, Array $after)
+    {
+        $this->befores = $before;
+        $this->afters = $after;
+    }
+
     public function setOption($key, $value)
     {
         $this->options[$key] = $value;
@@ -174,13 +221,22 @@ class Route
 
     public function alias($alias)
     {
-        $this->setOption('alias', $alias);
-        return $this;
+        return $this->setOption('alias', $alias);
     }
 
     public function where(Array $where)
     {
-        $this->setOption('where', $where);
-        return $this;
+        return $this->setOption('where', $where);
     }
+
+    public function before($filter)
+    {
+        return $this->setOption('before', (array) $filter);
+    }
+
+    public function after($filter)
+    {
+        return $this->setOption('after', (array) $filter);
+    }
+
 }
