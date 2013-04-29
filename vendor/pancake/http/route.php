@@ -14,33 +14,26 @@ class Route
 {
     private $path = '/';
 
-    private $host = '';
-
+    // HTTP methods/verps that apply to the route
     private $methods = array();
 
+    // Set within Router, Action/Callback to run
+    private $action;
+
+    // Groups applied to the filter
     private $groups = array();
 
-    private $befores = array();
+    // Set within App/Routes, allows for easy urling
+    private $alias;
 
+    // Set within App/Routes, an array of user defined patterns
+    private $where = array();
+
+    // Filters to be applied before and after the route call
+    private $befores = array();
     private $afters = array();
 
-    private $options = array(
-        // Set within App/Routes, allows for easy urling
-        'alias' => null,
-
-        // Set within App/Routes, an array of user defined patterns
-        'where' => array(),
-
-        // Set within Router, Action/Callback to run
-        'action' => null,
-
-        // Set within $this->getRegexPattern, the regex pattern used to match the url
-        'pattern' => null,
-
-        'before' => array(),
-
-        'after' => array(),
-    );
+    private $parameters;
 
     public function __construct($methods, $path)
     {
@@ -64,7 +57,7 @@ class Route
 
     public function callAction(Request $request)
     {
-        $callback = $this->getCallback($this->getOption('action'));
+        $callback = $this->getCallback($this->getAction());
         $parameters = $this->getParameters($request->getPathInfo());
 
         return call_user_func_array($callback, $parameters);
@@ -84,12 +77,6 @@ class Route
         }
 
         return $this->createControllerCallback($action);
-    }
-
-    private function getParameters($path)
-    {
-        preg_match($this->getOption('pattern'), $path, $matches);
-        return array_splice($matches, 1);
     }
 
     private function callBeforeFilters()
@@ -118,8 +105,12 @@ class Route
 
     public function getName()
     {
-        // TODO add domain
         return $this->getMethod().' '.$this->getPath();
+    }
+
+    public function getPath()
+    {
+        return $this->path;
     }
 
     public function getMethod()
@@ -132,9 +123,39 @@ class Route
         return $this->methods;
     }
 
-    public function getPath()
+    public function getAction()
     {
-        return $this->path;
+        return $this->action;
+    }
+
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    private function getWhere()
+    {
+        return $this->where;
+    }
+
+    public function getBefores()
+    {
+        return $this->befores;
+    }
+
+    public function getAfters()
+    {
+        return $this->afters;
+    }
+
+    public function getParameters()
+    {
+        return $this->parameters;
     }
 
     // Returns the pattern, if it's a static one (i.e. without dynamic parameters)
@@ -153,7 +174,7 @@ class Route
 
     public function getRegexPattern()
     {
-        $patterns = $this->getOption('where');
+        $patterns = $this->getWhere();
         $pattern = $this->getPath();
 
         // Inject user provided regex via Route::get()->where();
@@ -179,14 +200,16 @@ class Route
 
         $pattern = '#^'.$pattern.'$#s';
 
-        $this->setOption('pattern', $pattern);
-
         return $pattern;
     }
 
-    public function getOption($key)
+    public function getDomainRegexPattern()
     {
-        return isset($this->options[$key]) ? $this->options[$key] : null;
+       foreach($this->getGroups() as $group)
+       {
+           if ($group->getDomain())
+               return $group->getDomainRegexPattern();
+       }
     }
 
     public function setPath($path)
@@ -201,42 +224,58 @@ class Route
         return $this;
     }
 
+    public function setAction($action)
+    {
+        $this->action = $action;
+        return $this;
+    }
+
     public function setGroups($groups)
     {
         $this->groups = (array) $groups;
         return $this;
     }
 
-    public function setFilters(Array $before, Array $after)
+    public function setBefore(Array $before)
     {
         $this->befores = $before;
-        $this->afters = $after;
+        return $this;
     }
 
-    public function setOption($key, $value)
+    public function setAfter(Array $after)
     {
-        $this->options[$key] = $value;
+        $this->afters = $after;
+        return $this;
+    }
+
+    public function setParameters(Array $parameters)
+    {
+        $this->parameters = $parameters;
         return $this;
     }
 
     public function alias($alias)
     {
-        return $this->setOption('alias', $alias);
+        $this->alias = $alias;
+        return $this;
     }
 
     public function where(Array $where)
     {
-        return $this->setOption('where', $where);
+        $this->where = $where;
+        return $this;
     }
 
     public function before($filter)
     {
-        return $this->setOption('before', (array) $filter);
+        $this->before = (array) $filter;
+        return $this;
     }
 
     public function after($filter)
     {
-        return $this->setOption('after', (array) $filter);
+        $this->after = (array) $filter;
+        return $this;
     }
 
 }

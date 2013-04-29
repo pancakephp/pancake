@@ -18,14 +18,14 @@ abstract class Store implements \ArrayAccess
 
     protected $aliases = array();
 
-    public function __get($key)
-    {
-        return $this[$key];
-    }
-
     public function __set($key, $value)
     {
         $this[$key] = $value;
+    }
+
+    public function __get($key)
+    {
+        return $this[$key];
     }
 
     public function share(Closure $closure)
@@ -46,7 +46,6 @@ abstract class Store implements \ArrayAccess
 
     public function set($key, $value)
     {
-        // Aliases first...
         $this->store[$key] = $value;
     }
 

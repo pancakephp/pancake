@@ -29,6 +29,11 @@ class RouteContext
         return $this->method;
     }
 
+    public function getHost()
+    {
+        return $this->host;
+    }
+
     public function setPathInfo($path_info)
     {
         $this->path_info = $path_info;
@@ -47,16 +52,6 @@ class RouteContext
     public function setScheme($scheme)
     {
         $this->scheme = $scheme;
-    }
-
-    public function setPort($port)
-    {
-        $this->port = $port;
-    }
-
-    public function setQuery($query)
-    {
-        $this->query = $query;
     }
 
 }

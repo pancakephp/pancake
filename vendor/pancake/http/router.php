@@ -8,10 +8,13 @@ namespace Pancake\HTTP;
 
 use Pancake\HTTP\Route\Collection;
 use Pancake\HTTP\Route\Matcher;
+use Pancake\Support\Arr;
 use Closure;
 
 class Router
 {
+
+    protected $app;
 
     protected $routes;
 
@@ -24,6 +27,7 @@ class Router
 
     public function __construct($app)
     {
+        $this->app = $app;
         $this->routes = new Collection;
     }
 
@@ -37,11 +41,8 @@ class Router
 
         $route = $this->routes->get($name);
 
-        // TODO: Cleanup?
-        $route->setFilters(
-            array_intersect_key($this->filters, array_flip($route->getOption('before'))),
-            array_intersect_key($this->filters, array_flip($route->getOption('after')))
-        );
+        $route->setBefore(Arr::only($this->filters, $route->getBefores()));
+        $route->setAfter(Arr::only($this->filters, $route->getAfters()));
 
         return $route;
     }
@@ -49,17 +50,17 @@ class Router
     public function register($method, $pattern, $action)
     {
         $route = (new Route($method, $pattern))
-            ->setOption('action', $action)
-            ->setGroups($this->groups['stack']);
+            ->setAction($action)
+            ->setGroups(Arr::only($this->groups['instances'], $this->groups['stack']));
 
         $this->routes->add($route);
 
         return $route;
     }
 
-    public function group($name, Closure $action)
+    public function group(Closure $action)
     {
-        $group = $this->addGroup($name);
+        $group = $this->addGroup();
 
         // Add routes
         call_user_func($action);
@@ -71,9 +72,18 @@ class Router
         return $group;
     }
 
-    public function addGroup($name){
-        $this->groups['stack'][] = $name;
-        return $this->groups['instances'][$name] = new Group();
+    public function addGroup(){
+        // Add a group instance
+        $this->groups['instances'][] = new Group();
+
+        end($this->groups['instances']);
+        $index = key($this->groups['instances']);
+
+        // Create a reference on the stack to the index of the instance.
+        $this->groups['stack'][] = $index;
+
+        // Return the group
+        return $this->groups['instances'][$index];
     }
 
     public function getFilter($key)
@@ -81,7 +91,7 @@ class Router
         return isset($this->filters[$key]) ? $this->filters[$key] : null;
     }
 
-    public function getCollection()
+    public function getRoutes()
     {
         return $this->routes;
     }

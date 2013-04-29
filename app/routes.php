@@ -4,19 +4,36 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-Route::any('/', 'HomeController@index')
-->before(array('beforeFilterOne', 'beforeFilterTwo'))
-->after('afterFilter');
+Route::get('/', function(){
+    return View::make('hello');
+});
 
-Route::get('/{name}/{age}', function($name, $age)
+// Route::get('/', 'HomeController@index');
+
+Route::group(function()
 {
-    return 'Hello '.$name.', you\'re '.$age;
+
+    Route::get('/{age}/{location}', function($name, $age, $location)
+    {
+        return 'Hello '.$name.', you\'re '.$age.' from '.$location;
+    })
+    ->alias('me')
+    ->where(array(
+        'age' => '[0-9]+'
+    ));
+
 })
-// ->alias('me')
+->domain('{name}.pancake.dev')
 ->where(array(
-    'age' => '[0-9]+'
+    'name' => '[A-z]+'
 ));
 
+
+/**
+ * Apply filters by ->before(string|array) & ->after(string|array).
+ * Anything returned (other than null) returned from a before filter
+ * will stop the request at that point.
+ */
 Route::filter('beforeFilterOne', function()
 {
     echo 'Before Filter One<br/>';
@@ -29,5 +46,5 @@ Route::filter('beforeFilterTwo', function()
 
 Route::filter('afterFilter', function()
 {
-    return 'After Filter<br/>';
+    echo 'After Filter<br/>';
 });

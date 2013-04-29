@@ -8,7 +8,7 @@ class HomeController // extends Controller
 
     public function index()
     {
-        // Redirect::to('me');
+        // Redirect::to('me')->params(array('name' => 'Aaron', 'age' => 21))->now();
 
         return 'Hello '.$this->_world();
     }

@@ -28,6 +28,7 @@ class SplClassLoader
 
     public function loadClass($classname)
     {
+        $ds = DIRECTORY_SEPARATOR;
         $classname = ltrim($classname, $this->namespace_seperator);
         $filename  = '';
         $namespace = '';
@@ -36,17 +37,13 @@ class SplClassLoader
         {
             $namespace = substr($classname, 0, $pos);
             $classname = substr($classname, $pos + 1);
-            $filename  = str_replace($this->namespace_seperator, DIRECTORY_SEPARATOR, $namespace).DIRECTORY_SEPARATOR;
+            $filename  = str_replace($this->namespace_seperator, $ds, $namespace).$ds;
         }
 
-        $filename .= str_replace('_', DIRECTORY_SEPARATOR, $classname) . $this->ext;
+        $filename .= str_replace('_', $ds, $classname) . $this->ext;
 
-        $filename = (!($this->include_path === null) ? $this->include_path.DIRECTORY_SEPARATOR : '').$filename;
+        $filename = (!($this->include_path === null) ? $this->include_path.$ds : '').$filename;
 
-        if (!file_exists($filename))
-            return false;
-
-        require_once $filename;
-        return true;
+        require $filename;
     }
 }

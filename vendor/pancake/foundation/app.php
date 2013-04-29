@@ -22,6 +22,7 @@ class App extends Store
     public function run()
     {
         $response = $this->dispatch($this->request);
+
         $response->send();
     }
 
@@ -48,11 +49,6 @@ class App extends Store
         $this->paths = $paths;
     }
 
-    private function register($provider)
-    {
-        $provider->register();
-    }
-
     public function registerFacade()
     {
         Facade::setApp($this);
@@ -61,6 +57,11 @@ class App extends Store
     public function registerAliases(Array $aliases)
     {
         $this->register(Aliases::getInstance($aliases));
+    }
+
+    private function register($provider)
+    {
+        $provider->register();
     }
 
 }

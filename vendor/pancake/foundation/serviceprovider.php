@@ -44,4 +44,20 @@ class ServiceProvider
             return new \Pancake\HTTP\Request;
         });
     }
+
+    private function registerRedirect()
+    {
+        $this->app->redirect = $this->app->share(function($app)
+        {
+            return new \Pancake\HTTP\Redirect($app->router->getRoutes());
+        });
+    }
+
+    private function registerView()
+    {
+        $this->app->view = $this->app->share(function($app)
+        {
+            return new \Pancake\View\View;
+        });
+    }
 }

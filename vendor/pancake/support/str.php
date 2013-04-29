@@ -20,7 +20,6 @@ class Str
         return false;
     }
 
-
     public static function startsWith($haystack, $needle)
     {
         return strpos($haystack, $needle) === 0;
@@ -50,7 +49,6 @@ class Str
 
         return substr($haystack, strrpos($haystack, $needle) + 1);
     }
-
 
     public static function studly($str)
     {

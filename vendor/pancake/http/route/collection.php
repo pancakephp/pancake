@@ -13,11 +13,14 @@ class Collection implements \IteratorAggregate, \Countable
 
     private $routes = array();
 
+    private $aliases = array();
+
     public function add(Route $route)
     {
         $name = $route->getName();
 
         unset($this->routes[$name]);
+
         $this->routes[$name] = $route;
     }
 

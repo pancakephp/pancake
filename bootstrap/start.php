@@ -28,7 +28,7 @@ $app->registerFacade();
 /**
  * Load the routes
  */
-require_once $app['paths']['app'].'/routes.php';
+require $app['paths']['app'].'/routes.php';
 
 /**
  * Return the app

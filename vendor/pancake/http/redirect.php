@@ -6,6 +6,7 @@
 
 namespace Pancake\HTTP;
 
+use Pancake\HTTP\Redirector;
 use Pancake\HTTP\Route\Collection;
 
 class Redirect
@@ -17,12 +18,15 @@ class Redirect
         $this->routes = $routes;
     }
 
+    // TODO: This is an O(n) search, could be an O(1)?
     public function to($alias)
     {
-        // echo __METHOD__.' : '.__LINE__;
-        // echo '<pre>'.print_r($this, 1).'</pre>';
-
-        // die($alias);
+        foreach($this->routes as $route)
+        {
+            if($route->getAlias() == $alias)
+            {
+                return new Redirector($route);
+            }
+        }
     }
-
 }

@@ -27,16 +27,28 @@ class Matcher
             if (!$route->getStaticPattern() && !(Str::startsWith($path, $route->getStaticPrefix())))
                 continue;
 
-            if (!preg_match($route->getRegexPattern(), $path, $matches))
+            if (!preg_match($route->getRegexPattern(), $path, $m1))
                 continue;
-
-            // TODO: Matches on domain
 
             if (!(in_array($this->context->getMethod(), $route->getMethods())))
                 continue;
 
+            if (
+                $route->getDomainRegexPattern() &&
+                !preg_match($route->getDomainRegexPattern(), $this->context->getHost(), $m2)
+            ){
+                continue;
+            }
+
+            $m1 = array_splice($m1, 1);
+            $m2 = isset($m2) ? array_splice($m2, 1) : array();
+
+            $route->setParameters(array_merge($m2, $m1));
+
             return $name;
         }
+
+        throw new \Exception('404');
     }
 
 }

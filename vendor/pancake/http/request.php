@@ -7,6 +7,7 @@
 namespace Pancake\HTTP;
 
 use Pancake\Support\Sacks\ServerSack;
+use Pancake\Support\Sacks\Sack;
 use Pancake\HTTP\Request\RouteContext;
 
 class Request
@@ -22,6 +23,7 @@ class Request
     public $query;      // $_GET
     public $request;    // $_POST
     public $server;     // $_SERVER
+    public $cookie;     // $_COOKIE
     public $files;      // $_FILES
     public $session;    // $_SESSION
     public $headers;    // Headers
@@ -31,7 +33,12 @@ class Request
 
     public function __construct()
     {
-        $this->server = new ServerSack($_SERVER);
+        $this->query   = new Sack($_GET);
+        $this->request = new Sack($_POST);
+        $this->server  = new ServerSack($_SERVER);
+        $this->cookie  = new Sack($_COOKIE);
+        $this->files   = new Sack($_FILES);
+        // $this->session = new Sack($_SESSION);
     }
 
     // Normalized URI
@@ -40,8 +47,7 @@ class Request
     // http://site.dev/about        returns '/about'
     public function getPathInfo()
     {
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        return urldecode($uri);
+        return $this->server->get('PATH_INFO', '/');
     }
 
     // $_GET
@@ -51,7 +57,9 @@ class Request
         return $this->isSecure() ? 'https' : 'http';
     }
 
-    public function getHost(){ }
+    public function getHost(){
+        return $this->server->get('SERVER_NAME');
+    }
 
     public function getPort(){ }
 
