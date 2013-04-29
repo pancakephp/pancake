@@ -4,14 +4,18 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-namespace Pancake\HTTP;
+namespace Pancake\Routing;
 
 use Closure;
+use Pancake\HTTP\Request;
+use Pancake\HTTP\Response;
 use Pancake\Support\Str;
 use Pancake\Support\SplClassLoader;
 
 class Route
 {
+    private $host = '';
+
     private $path = '/';
 
     // HTTP methods/verps that apply to the route
@@ -57,7 +61,7 @@ class Route
 
     public function callAction(Request $request)
     {
-        $callback = $this->getCallback($this->getAction());
+        $callback   = $this->getCallback($this->getAction());
         $parameters = $this->getParameters($request->getPathInfo());
 
         return call_user_func_array($callback, $parameters);
@@ -105,7 +109,13 @@ class Route
 
     public function getName()
     {
-        return $this->getMethod().' '.$this->getPath();
+        return ($this->getHost() ? $this->getHost().' ' : '')
+            .$this->getMethod().' '.$this->getPath();
+    }
+
+    public function getHost()
+    {
+        return $this->host;
     }
 
     public function getPath()
@@ -174,16 +184,18 @@ class Route
 
     public function getRegexPattern()
     {
+        return $this->generateRegex($this->getPath());
+    }
+
+    // TODO: Named matches
+    public function generateRegex($pattern)
+    {
         $patterns = $this->getWhere();
-        $pattern = $this->getPath();
 
         // Inject user provided regex via Route::get()->where();
         if ($patterns)
         {
-            $search = array();
-            $replace = array();
-
-            foreach($patterns as $key => $value)
+            foreach((array) $patterns as $key => $value)
             {
                 $search[] = '{'.trim($key).'}';
                 $replace[] = '('.$value.')';
@@ -203,13 +215,27 @@ class Route
         return $pattern;
     }
 
-    public function getDomainRegexPattern()
+    public function getHostStaticPattern()
     {
-       foreach($this->getGroups() as $group)
-       {
-           if ($group->getDomain())
-               return $group->getDomainRegexPattern();
-       }
+        return $this->getHost() && !Str::contains($this->getHost(), '{')
+            ? $this->getHost()
+            : false;
+    }
+
+    public function getHostStaticPrefix()
+    {
+        return Str::beforeFirst($this->getHost(), '{');
+    }
+
+    public function getHostRegexPattern()
+    {
+        return $this->generateRegex($this->getHost());
+    }
+
+    public function setHost($host)
+    {
+        $this->host = $host;
+        return $this;
     }
 
     public function setPath($path)
@@ -236,15 +262,27 @@ class Route
         return $this;
     }
 
-    public function setBefore(Array $before)
+    public function setAlias($alias)
     {
-        $this->befores = $before;
+        $this->alias = $alias;
         return $this;
     }
 
-    public function setAfter(Array $after)
+    public function setWhere(Array $where)
     {
-        $this->afters = $after;
+        $this->where = array_merge($this->getWhere(), $where);
+        return $this;
+    }
+
+    public function setBefore($before)
+    {
+        $this->befores = (array) $before;
+        return $this;
+    }
+
+    public function setAfter($after)
+    {
+        $this->afters = (array) $after;
         return $this;
     }
 
@@ -256,26 +294,22 @@ class Route
 
     public function alias($alias)
     {
-        $this->alias = $alias;
-        return $this;
+        return $this->setAlias($alias);
     }
 
     public function where(Array $where)
     {
-        $this->where = $where;
-        return $this;
+        return $this->setWhere($where);
     }
 
     public function before($filter)
     {
-        $this->before = (array) $filter;
-        return $this;
+        return $this->setBefore($filter);
     }
 
     public function after($filter)
     {
-        $this->after = (array) $filter;
-        return $this;
+        return $this->setAfter($filter);
     }
 
 }

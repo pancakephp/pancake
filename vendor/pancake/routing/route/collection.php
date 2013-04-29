@@ -4,9 +4,9 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-namespace Pancake\HTTP\Route;
+namespace Pancake\Routing\Route;
 
-use Pancake\HTTP\Route;
+use Pancake\Routing\Route;
 
 class Collection implements \IteratorAggregate, \Countable
 {
@@ -15,7 +15,7 @@ class Collection implements \IteratorAggregate, \Countable
 
     private $aliases = array();
 
-    public function add(Route $route)
+    public function addRoute(Route $route)
     {
         $name = $route->getName();
 

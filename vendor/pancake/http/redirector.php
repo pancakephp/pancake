@@ -5,6 +5,8 @@
  */
 namespace Pancake\HTTP;
 
+use Pancake\Routing\Route;
+
 class Redirector
 {
 

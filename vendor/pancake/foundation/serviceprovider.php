@@ -33,7 +33,7 @@ class ServiceProvider
     {
         $this->app->router = $this->app->share(function($app)
         {
-            return new \Pancake\HTTP\Router($app);
+            return new \Pancake\Routing\Router($app);
         });
     }
 

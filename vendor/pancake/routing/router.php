@@ -4,10 +4,13 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-namespace Pancake\HTTP;
+namespace Pancake\Routing;
 
-use Pancake\HTTP\Route\Collection;
-use Pancake\HTTP\Route\Matcher;
+use Pancake\Routing\Group\Collection as GroupCollection;
+use Pancake\Routing\Route\Collection as RouteCollection;
+use Pancake\Routing\Route\Matcher;
+use Pancake\HTTP\Request;
+use Pancake\HTTP\Response;
 use Pancake\Support\Arr;
 use Closure;
 
@@ -18,17 +21,15 @@ class Router
 
     protected $routes;
 
-    protected $filters = array();
+    protected $groups;
 
-    protected $groups = array(
-        'stack'     => array(),
-        'instances' => array()
-    );
+    protected $filters = array();
 
     public function __construct($app)
     {
         $this->app = $app;
-        $this->routes = new Collection;
+        $this->groups = new GroupCollection;
+        $this->routes = new RouteCollection;
     }
 
     public function route(Request $request)
@@ -49,41 +50,28 @@ class Router
 
     public function register($method, $pattern, $action)
     {
-        $route = (new Route($method, $pattern))
-            ->setAction($action)
-            ->setGroups(Arr::only($this->groups['instances'], $this->groups['stack']));
+        $route = (new Route($method, $pattern))->setAction($action);
 
-        $this->routes->add($route);
+        $this->groups->addRoute($route);
+        $this->routes->addRoute($route);
 
         return $route;
     }
 
     public function group(Closure $action)
     {
-        $group = $this->addGroup();
+        $this->groups->open();
 
-        // Add routes
         call_user_func($action);
 
-        // Remove the group from the stack
-        array_pop($this->groups['stack']);
+        $this->groups->close();
 
-        // Return the group instance so that it can be updated.
-        return $group;
+        return $this->groups->instance();
     }
 
-    public function addGroup(){
-        // Add a group instance
-        $this->groups['instances'][] = new Group();
-
-        end($this->groups['instances']);
-        $index = key($this->groups['instances']);
-
-        // Create a reference on the stack to the index of the instance.
-        $this->groups['stack'][] = $index;
-
-        // Return the group
-        return $this->groups['instances'][$index];
+    public function filter($name, Closure $action)
+    {
+        $this->filters[$name] = $action;
     }
 
     public function getFilter($key)
@@ -94,11 +82,6 @@ class Router
     public function getRoutes()
     {
         return $this->routes;
-    }
-
-    public function filter($name, Closure $action)
-    {
-        $this->filters[$name] = $action;
     }
 
     public function get($pattern, $action)

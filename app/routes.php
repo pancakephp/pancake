@@ -4,11 +4,14 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-Route::get('/', function(){
+Route::get('/', function()
+{
+    // TODO: Views
     return View::make('hello');
 });
 
-// Route::get('/', 'HomeController@index');
+// FIX: Routing to controller
+//Route::get('/', 'HomeController@index');
 
 Route::group(function()
 {
@@ -23,7 +26,10 @@ Route::group(function()
     ));
 
 })
-->domain('{name}.pancake.dev')
+// ->prefix('account')
+// ->before('beforeFilter')
+// ->after('afterFilter')
+->host('{name}.pancake.dev')
 ->where(array(
     'name' => '[A-z]+'
 ));

@@ -7,7 +7,7 @@
 namespace Pancake\Foundation;
 
 use Closure;
-use Pancake\HTTP\Router;
+use Pancake\Routing\Router;
 
 abstract class Store implements \ArrayAccess
 {

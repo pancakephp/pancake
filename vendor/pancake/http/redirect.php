@@ -7,7 +7,7 @@
 namespace Pancake\HTTP;
 
 use Pancake\HTTP\Redirector;
-use Pancake\HTTP\Route\Collection;
+use Pancake\Routing\Route\Collection;
 
 class Redirect
 {
