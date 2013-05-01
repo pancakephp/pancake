@@ -11,8 +11,10 @@ return array(
 
     'public' => __DIR__.'/../public',
 
-    'storage' => __DIR__.'/../storage',
-
     'vendor' => __DIR__.'/../vendor',
+
+    'storage' => __DIR__.'/../app/storage',
+
+    'views' => __DIR__.'/../app/views'
 
 );

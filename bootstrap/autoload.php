@@ -11,3 +11,6 @@ $loader->register();
 
 $loader = new Pancake\Support\SplClassLoader(__DIR__.'/../app/controllers');
 $loader->register();
+
+$loader = new Pancake\Support\SplClassLoader(__DIR__.'/../app/models');
+$loader->register();

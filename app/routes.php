@@ -4,14 +4,9 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-Route::get('/', function()
-{
-    // TODO: Views
-    return View::make('hello');
-});
+Route::get('/', 'HomeController@index');
 
-// FIX: Routing to controller
-//Route::get('/', 'HomeController@index');
+Route::get('/redirect', 'Home_TestController@redirect');
 
 Route::group(function()
 {

@@ -44,6 +44,6 @@ class SplClassLoader
 
         $filename = (!($this->include_path === null) ? $this->include_path.$ds : '').$filename;
 
-        require $filename;
+        !is_file($filename) ?: require $filename;
     }
 }

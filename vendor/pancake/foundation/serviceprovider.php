@@ -57,7 +57,8 @@ class ServiceProvider
     {
         $this->app->view = $this->app->share(function($app)
         {
-            return new \Pancake\View\View;
+            return new \Pancake\View\View($app);
         });
     }
+
 }
