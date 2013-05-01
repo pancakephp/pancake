@@ -33,8 +33,10 @@ class Route
     // Set within App/Routes, an array of user defined patterns
     private $where = array();
 
-    // Filters to be applied before and after the route call
+    // Filters to be applied before ..
     private $befores = array();
+
+    // .. and after the route call
     private $afters = array();
 
     private $parameters;
@@ -172,9 +174,7 @@ class Route
     // a dynamic pattern will return false
     public function getStaticPattern()
     {
-        return !Str::contains($this->getPath(), '{')
-            ? $this->getPath()
-            : false;
+        return !Str::contains($this->getPath(), '{') ? $this->getPath() : false;
     }
 
     public function getStaticPrefix()
@@ -207,7 +207,7 @@ class Route
         // Set any remaining regex
         if (Str::contains($pattern, '{'))
         {
-            $pattern = preg_replace('/\{[^\}]+\}/', '(.*)', $pattern);
+            $pattern = preg_replace('/\{[^\}]+\}/', '([^/]*)', $pattern);
         }
 
         $pattern = '#^'.$pattern.'$#s';

@@ -43,6 +43,14 @@ class Collection implements \IteratorAggregate, \Countable
         }
     }
 
+    public function updateRoutes()
+    {
+        foreach($this->groups as $group)
+        {
+            $group->updateRoutes();
+        }
+    }
+
     public function getIterator()
     {
         return new \ArrayIterator($this->groups);

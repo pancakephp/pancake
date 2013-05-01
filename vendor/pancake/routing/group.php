@@ -14,39 +14,65 @@ class Group
 
     private $routes = array();
 
+    private $host;
+
+    private $where;
+
+    private $prefix;
+
+    private $before;
+
+    private $after;
+
     public function addRoute(Route $route)
     {
         $this->routes[] = $route;
     }
 
-    public function setHosts($host)
+    public function updateRoutes()
     {
         foreach($this->routes as $route)
         {
-            $route->setHost($host);
+            $this->host and $route->setHost($this->host);
+
+            $this->where and $route->setWhere($this->where);
+
+            $this->prefix and $route->setPath('/'.$this->prefix.'/'.trim($route->getPath(), '/'));
+
+            $this->before and $route->setBefore($this->before);
+
+            $this->after and $route->setAfter($this->after);
         }
-
-        return $this;
-    }
-
-    public function setWheres(Array $where)
-    {
-        foreach($this->routes as $route)
-        {
-            $route->setWhere($where);
-        }
-
-        return $this;
     }
 
     public function host($host)
     {
-        return $this->setHosts($host);
+        $this->host = $host;
+        return $this;
     }
 
     public function where(Array $where)
     {
-        return $this->setWheres($where);
+        $this->where = $where;
+        return $this;
+    }
+
+    public function prefix($prefix)
+    {
+        $this->prefix = trim($prefix, '/');
+        return $this;
+    }
+
+    public function before($before)
+    {
+        $this->before = $before;
+        return $this;
+    }
+
+    public function after($after)
+    {
+        $this->after = $after;
+        return $this;
     }
 
 }

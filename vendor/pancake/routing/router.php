@@ -34,6 +34,8 @@ class Router
 
     public function route(Request $request)
     {
+        $this->groups->updateRoutes();
+
         $path = $request->getPathInfo();
 
         $context = $request->getRouteContext();

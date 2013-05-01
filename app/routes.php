@@ -2,6 +2,16 @@
 /**
  * @author      Aaron Lord <aaronlord1@gmail.com>
  * @copyright   (c) 2013 Aaron Lord
+ *
+ * Verb      Path                   Action     Route
+ * -------------------------------------------------------------
+ * get       /resource              index      resource@index
+ * get       /resource/create       create     resource@create
+ * post      /resource              store      resource@store
+ * get       /resource/{id}         show       resource@show
+ * get       /resource/{id}/edit    edit       resource@edit
+ * put       /resource/{id}         update     resource@update
+ * delete    /resource/{id}         destroy    resource@destroy
  */
 
 Route::get('/', 'HomeController@index');
@@ -11,9 +21,9 @@ Route::get('/redirect', 'Home_TestController@redirect');
 Route::group(function()
 {
 
-    Route::get('/{age}/{location}', function($name, $age, $location)
+    Route::get('/{location}', function($name, $location)
     {
-        return 'Hello '.$name.', you\'re '.$age.' from '.$location;
+        return 'Hello '.$name.', you\'re from '.$location;
     })
     ->alias('me')
     ->where(array(
@@ -21,9 +31,9 @@ Route::group(function()
     ));
 
 })
-// ->prefix('account')
-// ->before('beforeFilter')
-// ->after('afterFilter')
+->prefix('location')
+->before(array('beforeFilterOne', 'beforeFilterTwo'))
+->after('afterFilter')
 ->host('{name}.pancake.dev')
 ->where(array(
     'name' => '[A-z]+'
@@ -37,15 +47,15 @@ Route::group(function()
  */
 Route::filter('beforeFilterOne', function()
 {
-    echo 'Before Filter One<br/>';
+    // ..
 });
 
 Route::filter('beforeFilterTwo', function()
 {
-    echo 'Before Filter Two<br/>';
+    // ..
 });
 
 Route::filter('afterFilter', function()
 {
-    echo 'After Filter<br/>';
+    // ..
 });
