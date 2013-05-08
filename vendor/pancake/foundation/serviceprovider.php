@@ -61,4 +61,12 @@ class ServiceProvider
         });
     }
 
+    private function registerDatabase()
+    {
+        $this->app->database = $this->app->share(function($app)
+        {
+            return new \Pancake\Database\Database;
+        });
+    }
+
 }

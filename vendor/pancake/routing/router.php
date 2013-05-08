@@ -12,7 +12,7 @@ use Pancake\Routing\Route\Matcher;
 use Pancake\HTTP\Request;
 use Pancake\HTTP\Response;
 use Pancake\Support\Arr;
-use Closure;
+use \Pancake\HTTP\Exceptions\HttpException;
 
 class Router
 {
@@ -36,18 +36,30 @@ class Router
     {
         $this->groups->updateRoutes();
 
-        $path = $request->getPathInfo();
-
-        $context = $request->getRouteContext();
-
-        $name = (new Matcher($this->routes, $context))->match($path);
-
-        $route = $this->routes->get($name);
+        $route = $this->findRoute($request);
 
         $route->setBefore(Arr::only($this->filters, $route->getBefores()));
         $route->setAfter(Arr::only($this->filters, $route->getAfters()));
 
         return $route;
+    }
+
+    protected function findRoute(Request $request)
+    {
+        try
+        {
+            $path = $request->getPathInfo();
+
+            $context = $request->getRouteContext();
+
+            $name = (new Matcher($this->routes, $context))->match($path);
+
+            return $this->routes->get($name);
+        }
+        catch(HttpException $e)
+        {
+            die('<pre>'.print_r($e, 1).'</pre>');
+        }
     }
 
     public function register($method, $pattern, $action)
@@ -60,7 +72,7 @@ class Router
         return $route;
     }
 
-    public function group(Closure $action)
+    public function group(\Closure $action)
     {
         $this->groups->open();
 
@@ -71,7 +83,7 @@ class Router
         return $this->groups->instance();
     }
 
-    public function filter($name, Closure $action)
+    public function filter($name, \Closure $action)
     {
         $this->filters[$name] = $action;
     }

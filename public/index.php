@@ -4,7 +4,7 @@
  * @copyright   (c) 2013 Aaron Lord
  */
 
-isset($_GET['pprof']) && apd_set_pprof_trace('../app/storage/traces');
+isset($_GET['pprof']) and apd_set_pprof_trace('../app/storage/traces');
 
 require __DIR__.'/../bootstrap/autoload.php';
 

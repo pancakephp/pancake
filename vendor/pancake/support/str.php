@@ -57,4 +57,9 @@ class Str
         return str_replace(' ', '', $str);
     }
 
+    public static function camel($value)
+    {
+        return lcfirst(static::studly($value));
+    }
+
 }

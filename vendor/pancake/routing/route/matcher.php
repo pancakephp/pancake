@@ -57,7 +57,7 @@ class Matcher
             return $name;
         }
 
-        throw new \Exception('404');
+        throw new \Pancake\HTTP\Exceptions\NotFoundException();
     }
 
 }

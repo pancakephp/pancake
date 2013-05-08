@@ -16,6 +16,12 @@
 
 Route::get('/', 'HomeController@index');
 
+Route::get('/database', function()
+{
+    $extracts = DB::query('SELECT * FROM `extracts` LIMIT 1;')->execute();
+    return Response::json($extracts);
+});
+
 Route::get('/redirect', 'Home_TestController@redirect');
 
 Route::group(function()

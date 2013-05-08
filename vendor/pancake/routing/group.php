@@ -37,7 +37,9 @@ class Group
 
             $this->where and $route->setWhere($this->where);
 
-            $this->prefix and $route->setPath('/'.$this->prefix.'/'.trim($route->getPath(), '/'));
+            $this->prefix and $route->setPath(
+                '/'.$this->prefix.'/'.trim($route->getPath(), '/')
+            );
 
             $this->before and $route->setBefore($this->before);
 

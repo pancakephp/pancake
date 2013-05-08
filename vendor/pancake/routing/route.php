@@ -49,16 +49,16 @@ class Route
 
     public function run(Request $request)
     {
-        $response = $this->callBeforeFilters();
+        $content = $this->callBeforeFilters();
 
-        if (!$response)
+        if (!$content)
         {
-            $response = $this->callAction($request);
+            $content = $this->callAction($request);
 
             $this->callAfterFilters();
         }
 
-        return new Response($response);
+        return !($content instanceof Response) ? new Response($content) : $content;
     }
 
     public function callAction(Request $request)
@@ -89,10 +89,10 @@ class Route
     {
         foreach($this->befores as $callback)
         {
-            $response = $this->callFilter($callback);
+            $content = $this->callFilter($callback);
 
-            if (!is_null($response))
-                return $response;
+            if (!is_null($content))
+                return $content;
         }
     }
 

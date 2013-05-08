@@ -13,6 +13,10 @@ return array(
 
     'Redirect' => 'Pancake\Support\Facades\Redirect',
 
+    'Response' => 'Pancake\Support\Facades\Response',
+
     'View' => 'Pancake\Support\Facades\View',
+
+    'DB' => 'Pancake\Support\Facades\DB',
 
 );

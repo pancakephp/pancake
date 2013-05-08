@@ -6,7 +6,7 @@
 
 namespace Pancake\Support\Sacks;
 
-class Sack
+class Sack implements \ArrayAccess, \IteratorAggregate, \Countable
 {
 
     private $values = array();
@@ -39,6 +39,36 @@ class Sack
         }
 
         return $default;
+    }
+
+    public function offsetGet($key)
+    {
+        return $this->get($key);
+    }
+
+    public function offsetSet($key, $value)
+    {
+        $this->set($key, $value);
+    }
+
+    public function offsetExists($key)
+    {
+        return isset($this->values[$key]);
+    }
+
+    public function offsetUnset($key)
+    {
+        unset($this->values[$key]);
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->values);
+    }
+
+    public function count()
+    {
+        return count($this->values);
     }
 
 }
