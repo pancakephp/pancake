@@ -15,6 +15,8 @@ return array(
 
     'storage' => __DIR__.'/../app/storage',
 
-    'views' => __DIR__.'/../app/views'
+    'views' => __DIR__.'/../app/views',
+
+    'bootstrap' => __DIR__
 
 );

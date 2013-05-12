@@ -137,8 +137,7 @@ class Template
     {
         $pattern = $this->functionRegex('include');
 
-        $replacement = '$1<?php echo $this->make($2, Arr::without(get_defined_vars(), '
-            .'array(\'__data\', \'__file\'))); ?>';
+        $replacement = '$1<?php echo $this->make($2, Arr::without(get_defined_vars(), array("__data", "__file"))); ?>';
 
         return preg_replace($pattern, $replacement, $value);
     }

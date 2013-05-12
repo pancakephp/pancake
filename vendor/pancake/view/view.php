@@ -26,10 +26,11 @@ class View
 
     public function make($file, $data = array())
     {
+        $file = str_replace('.', '/', $file);
         $file = $this->path.'/'.$file.'.php';
         $cache = $this->cache.'/'.md5($file);
 
-        if(!($stored = Cache::get($cache, $file)))
+        if (!($stored = Cache::get($cache, $file)))
         {
             $stored = Cache::put($cache, new Template($file));
         }

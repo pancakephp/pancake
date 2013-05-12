@@ -8,7 +8,8 @@ namespace Pancake\Foundation;
 
 use Pancake\HTTP\Request;
 use Pancake\Support\Aliases;
-use Pancake\Support\Facades\Facade;
+use Pancake\Config\Config;
+use Pancake\Support\SplClassLoader;
 
 class App extends Store
 {
@@ -49,9 +50,13 @@ class App extends Store
         $this->paths = $paths;
     }
 
-    public function registerFacade()
+    public function registerWithAutoloader($paths)
     {
-        Facade::setApp($this);
+        foreach ($paths as $path)
+        {
+            $loader = new SplClassLoader($path);
+            $loader->register();
+        }
     }
 
     public function registerAliases(Array $aliases)

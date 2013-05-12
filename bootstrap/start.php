@@ -10,6 +10,11 @@
 $app = new Pancake\Foundation\App;
 
 /**
+ * Register the app within the Facade
+ */
+Pancake\Support\Facades\Facade::setApp($app);
+
+/**
  * Set application paths
  */
 $app->setPaths(require __DIR__.'/paths.php');
@@ -19,11 +24,11 @@ $app->setPaths(require __DIR__.'/paths.php');
  */
 $app->registerAliases(require __DIR__.'/aliases.php');
 
-/**
- * Register the app within the Facade
- */
 
-$app->registerFacade();
+/**
+ * Autoload instances
+ */
+$app->registerWithAutoloader($app['config']['app']['autoload']);
 
 /**
  * Load the routes

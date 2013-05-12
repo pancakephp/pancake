@@ -6,7 +6,10 @@
 
 isset($_GET['pprof']) and apd_set_pprof_trace('../app/storage/traces');
 
-require __DIR__.'/../bootstrap/autoload.php';
+require __DIR__.'/../vendor/pancake/support/splclassloader.php';
+
+$loader = new Pancake\Support\SplClassLoader(__DIR__.'/../vendor');
+$loader->register();
 
 $app = require __DIR__.'/../bootstrap/start.php';
 

@@ -76,7 +76,8 @@ abstract class Store implements \ArrayAccess
         return isset($this->aliases[$alias]) ? $this->aliases[$alias] : $alias;
     }
 
-    public function offsetGet($key) {
+    public function offsetGet($key)
+    {
         return $this->get($key);
     }
 

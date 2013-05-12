@@ -3,6 +3,8 @@
  * @author      Aaron Lord <aaronlord1@gmail.com>
  * @copyright   (c) 2013 Aaron Lord
  *
+ * @see  https://github.com/pancakephp/pancake/wiki/Routing
+ *
  * Verb      Path                   Action     Route
  * -------------------------------------------------------------
  * get       /resource              index      resource@index
@@ -38,30 +40,13 @@ Route::group(function()
 
 })
 ->prefix('location')
-->before(array('beforeFilterOne', 'beforeFilterTwo'))
-->after('afterFilter')
+->before('auth')
 ->host('{name}.pancake.dev')
 ->where(array(
     'name' => '[A-z]+'
 ));
 
-
-/**
- * Apply filters by ->before(string|array) & ->after(string|array).
- * Anything returned (other than null) returned from a before filter
- * will stop the request at that point.
- */
-Route::filter('beforeFilterOne', function()
+Route::get('/login', function ()
 {
-    // ..
-});
-
-Route::filter('beforeFilterTwo', function()
-{
-    // ..
-});
-
-Route::filter('afterFilter', function()
-{
-    // ..
+    return 'Login';
 });

@@ -29,9 +29,22 @@ class ServiceProvider
         }
     }
 
+    private function registerConfig()
+    {
+        $this->app->config = $this->app->share(function ($app)
+        {
+            $config = new \Pancake\Config\Config($app);
+
+            $files = glob($app['paths']['app'].'/config/*.php');
+            $config->loadFile($files);
+
+            return $config;
+        });
+    }
+
     private function registerRouter()
     {
-        $this->app->router = $this->app->share(function($app)
+        $this->app->router = $this->app->share(function ($app)
         {
             return new \Pancake\Routing\Router($app);
         });
@@ -39,7 +52,7 @@ class ServiceProvider
 
     private function registerRequest()
     {
-        $this->app->request = $this->app->share(function($app)
+        $this->app->request = $this->app->share(function ($app)
         {
             return new \Pancake\HTTP\Request;
         });
@@ -47,7 +60,7 @@ class ServiceProvider
 
     private function registerRedirect()
     {
-        $this->app->redirect = $this->app->share(function($app)
+        $this->app->redirect = $this->app->share(function ($app)
         {
             return new \Pancake\HTTP\Redirect($app->router->getRoutes());
         });
@@ -55,7 +68,7 @@ class ServiceProvider
 
     private function registerView()
     {
-        $this->app->view = $this->app->share(function($app)
+        $this->app->view = $this->app->share(function ($app)
         {
             return new \Pancake\View\View($app);
         });
@@ -63,7 +76,7 @@ class ServiceProvider
 
     private function registerDatabase()
     {
-        $this->app->database = $this->app->share(function($app)
+        $this->app->database = $this->app->share(function ($app)
         {
             return new \Pancake\Database\Database;
         });
