@@ -7,12 +7,12 @@
 /**
  * Create the application
  */
-$app = new Pancake\Foundation\App;
+$app = new Griddle\Foundation\App;
 
 /**
  * Register the app within the Facade
  */
-Pancake\Support\Facades\Facade::setApp($app);
+Griddle\Support\Facades\Facade::setApp($app);
 
 /**
  * Set application paths

@@ -1,22 +1,22 @@
 <?php
 return array(
 
-    'Controller' => 'Pancake\Routing\Controllers\Controller',
+    'Controller' => 'Griddle\Routing\Controllers\Controller',
 
-    'Str' => 'Pancake\Support\Str',
+    'Str' => 'Griddle\Support\Str',
 
-    'Arr' => 'Pancake\Support\Arr',
+    'Arr' => 'Griddle\Support\Arr',
 
-    'HTML' => 'Pancake\Support\HTML',
+    'HTML' => 'Griddle\Support\HTML',
 
-    'Route' => 'Pancake\Support\Facades\Route',
+    'Route' => 'Griddle\Support\Facades\Route',
 
-    'Redirect' => 'Pancake\Support\Facades\Redirect',
+    'Redirect' => 'Griddle\Support\Facades\Redirect',
 
-    'Response' => 'Pancake\Support\Facades\Response',
+    'Response' => 'Griddle\Support\Facades\Response',
 
-    'View' => 'Pancake\Support\Facades\View',
+    'View' => 'Griddle\Support\Facades\View',
 
-    'DB' => 'Pancake\Support\Facades\DB',
+    'DB' => 'Griddle\Support\Facades\DB',
 
 );

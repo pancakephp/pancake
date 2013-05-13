@@ -1,0 +1,35 @@
+{
+    "repositories" : [
+        {
+            "type" : "package",
+            "package" : {
+                "name" : "pancakephp/griddle",
+                "version" : "0.0.1",
+                "source" : {
+                    "type" : "git",
+                    "url" : "git@github.com:pancakephp/griddle.git",
+                    "reference" : "master"
+                },
+                "autoload" : {
+                    "psr-0" : {
+                        "Griddle" : "src/"
+                    }
+                }
+            }
+        }
+    ],
+
+    "require" : {
+        "pancakephp/griddle" : "0.0.*"
+    },
+
+    "autoload": {
+        "classmap": [
+            "app/controllers",
+            "app/models",
+            "app/tests/TestCase.php"
+        ]
+    },
+
+    "minimum-stability": "dev"
+}
