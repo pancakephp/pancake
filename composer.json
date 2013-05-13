@@ -16,11 +16,29 @@
                     }
                 }
             }
+        },
+        {
+            "type" : "package",
+            "package" : {
+                "name" : "pancakephp/auth",
+                "version" : "0.0.1",
+                "source" : {
+                    "type" : "git",
+                    "url" : "git@github.com:pancakephp/auth.git",
+                    "reference" : "master"
+                },
+                "autoload" : {
+                    "psr-0" : {
+                        "Griddle" : "src/"
+                    }
+                }
+            }
         }
     ],
 
     "require" : {
-        "pancakephp/griddle" : "0.0.*"
+        "pancakephp/griddle" : "0.0.*",
+        "pancakephp/auth" : "0.0.*"
     },
 
     "autoload": {
